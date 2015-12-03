@@ -136,7 +136,7 @@ body {
 }
 
 #imageonly {
-  background-color: $clrBg;
+  background-color: #9ddaf6;
   background-image: url("../images/egg.gif");
   background-repeat: no-repeat;
   background-position: center;
@@ -144,8 +144,10 @@ body {
 .centered
 {
   position: relative;
-  left: 400px;
-  top: 450px;
+  text-align: center;
+  width:100%;
+  top:400px;
+
 }
 
 h1{
