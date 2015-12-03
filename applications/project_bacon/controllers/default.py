@@ -2424,23 +2424,40 @@ WORDLIST=[
     'zloty'
 ]
 
+
 def index():
     """
-    example action using the internationalization operator T and flash
-    rendered by views/default/index.html or views/generic.html
-
-    if you need a simple wiki simply replace the two lines below with:
-    return auth.wiki()
+    Splash page
     """
+    return dict()
 
-    response.flash = T("Hello World")
-    return dict(message=T('Welcome to web2py!'))
+
+def instructions():
+
+    return dict()
+
+
+def wordlist():
+    """
+    List of all words used in the game
+    """
+    d = db().select(db.wordList.ALL).as_list()
+    return dict(wordList=d)
+
 
 def board():
     """
     List of playable games
     """
     return dict()
+
+
+def game():
+    """
+    Individual game
+    """
+    return dict()
+
 
 def add_game():
     """
@@ -2450,6 +2467,7 @@ def add_game():
     db.games.update_or_insert(targetWord = request.vars.targetWord)
     db(db.game_names.word == request.vars.targetWord).delete()
     return 'ok'
+
 
 def load_games():
     """
@@ -2461,6 +2479,7 @@ def load_games():
     d = {r.id: {'word': r.targetWord} for r in rows}
     return response.json(dict(games=d))
 
+
 def load_game_names():
     """
     Loads the list of available game names
@@ -2468,6 +2487,7 @@ def load_game_names():
     rows = db().select(db.game_names.ALL)
     d2 = [r.word for r in rows]
     return response.json(dict(game_names=d2))
+
 
 def user():
     """
