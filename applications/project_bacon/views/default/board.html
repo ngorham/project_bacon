@@ -1,9 +1,7 @@
 {{extend 'layout.html'}}
 <div id="target"></div>
 <script id="template" type="text/ractive">
-    <h1>Choose a Game to Play!</h1>
     <div id="create_game">
-
         <form action="#">
             <label for="game_name">Game Name</label>
             <input type="text" id="game_name" name="game_name" value="{% active_game_name %}" />
@@ -11,17 +9,17 @@
             <input id="game_nameSubmit" type="submit" value="Submit" on-click="add_game" style="display: none;"/>
         </form>
     </div>
-    <div class="container gamesCont">
+    <table class="table">
+        <tbody>
             {% #games: game_id %}
-            <div class="col-md-3">
-                    <div class="panel panel-info ">
-                        <div class="panel-heading">    <a href="game/{% game_id %}"> {% word %}</a></div>
-                        <div class="panel-body">    <a href="game/{% game_id %}"> Play {% word %}</a></div>
-                    </div>
-                    </div>
-
+                <tr>
+                    <td>
+                        <a href="game/{% game_id %}"> Play {% word %}</a>
+                    </td>
+                </tr>
             {% /games %}
-    </div>
+        </tbody>
+    </table>
 </script>
 <script type="text/javascript">
     //Ractive Object
