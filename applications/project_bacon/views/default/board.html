@@ -1,0 +1,107 @@
+{{extend 'layout.html'}}
+<div id="target"></div>
+<script id="template" type="text/ractive">
+    <div id="create_game">
+        <form action="#">
+            <label for="game_name">Game Name</label>
+            <input type="text" id="game_name" name="game_name" value="{% active_game_name %}" />
+            <span class="error" id="game_nameError" name="game_nameError"></span>
+            <input id="game_nameSubmit" type="submit" value="Submit" on-click="add_game" style="display: none;"/>
+        </form>
+    </div>
+    <table class="table">
+        <tbody>
+            {% #games: game_id %}
+                <tr>
+                    <td>
+                        <a href="game/{% game_id %}"> Play {% word %}</a>
+                    </td>
+                </tr>
+            {% /games %}
+        </tbody>
+    </table>
+</script>
+<script type="text/javascript">
+    //Ractive Object
+    var ractive = new Ractive({
+        delimiters: ['{%', '%}'],
+        tripleDelimiters: ['{%%', '%%}'],
+        el: '#target',
+        template: '#template',
+        data: {
+            games: {},
+            game_names: [],
+            active_game_name: ''
+        }
+    });
+
+    //Loads the list of games
+    function update(){
+        //Loads list of created games
+        $.ajax(
+                "{{=URL('default', 'load_games')}}",
+                {
+                    method: 'POST',
+                    success: function(data){
+                        ractive.set('games', data['games']);
+                    },
+                    error: function(){}
+                }
+
+        );
+        //Loads list of available game names (copy of wordList)
+        $.ajax(
+                "{{=URL('default', 'load_game_names')}}",
+                {
+                    method: 'POST',
+                    success: function(data){
+                        ractive.set('game_names', data['game_names']);
+                        $("#game_name").autocomplete({
+                             source: data['game_names']
+                         });
+                    },
+                    error: function(){}
+                }
+        );
+    }
+
+    //Send a new game to the server
+    function send_game(target_word){
+        $.ajax("{{=URL('default', 'add_game', user_signature=True)}}",
+                {
+                    data: {
+                        targetWord: target_word //request.vars.targetWord
+                    },
+                    method: 'POST',
+                    success: function(){
+                        var games = ractive.get('games');
+                        console.log(games);
+                        if(game_id in games){
+                            //do nothing
+                        } else {
+                            games[game_id] = { targetWord: target_word }
+                        }
+                        ractive.set('games', games);
+                    },
+                    error: function(){}
+                }
+        );
+    }
+
+    //Called when submit button is clicked
+    ractive.on("add_game", function(e){
+        var game_name = ractive.get('active_game_name');
+        if($.trim(game_name).length > 0){
+            send_game(game_name);
+            ractive.set('active_game_name', '');
+            update();
+        }
+        return false;
+    });
+
+    //
+    update();
+    //Periodic update: 10 seconds
+    setInterval(function(){ update(); }, 10000);
+</script>
+<script src="{{=URL('static', 'js/form-validate.js')}}"></script>
